@@ -1,2 +1,3 @@
 # PyStorm
-The great operating system
+English:
+PyCmd path: PyTools/PyCmd/py_cmd.py
