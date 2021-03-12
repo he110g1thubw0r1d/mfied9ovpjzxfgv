@@ -90,6 +90,10 @@ def run():
     global files, disk_list
     file = open("data.txt", "r")
     files = eval(file.readline())
+    username = file.readline()
+    if username == "(null)":
+        print("Error: No user")
+        return
     file.close()
     print("PyCmd\n----------")
     username = input("Enter username: ")
@@ -141,3 +145,4 @@ def run():
     file = open("data.txt", "w")
     file.write(str(files))
     file.close()
+run()
