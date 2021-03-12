@@ -8,6 +8,7 @@ working_dir = None
 directory_count = None
 disk_list = []
 
+
 def ls(command):
     directory_count = working_dir["DIR_COUNT"]
     print(
@@ -81,10 +82,11 @@ def remove_disk(disk):
         if disk not in disk_list:
             print(f"The disk '{disk}' is not in the list.")
         else:
-          del files[disk]
-          disk_list.remove(disk)
+            del files[disk]
+            disk_list.remove(disk)
     else:
         print("Invalid disk name")
+
 
 def run():
     global files, disk_list
@@ -94,10 +96,16 @@ def run():
     if username == "(null)":
         print("Error: No user")
         return
+    if file.readline()[-4:] == "True":
+        new_user = True
+    else:
+        new_user = False
     file.close()
     print("PyCmd\n----------")
-    username = input("Enter username: ")
-    print(f"Hello {username}!")
+    if new_user == "True":
+        print(f"Welcome {username}!")
+    else:
+        print(f"Welcome back {username}!")
     disk_list = [disk[0] for disk in files.keys()]
     action_index = None
     while True:
@@ -143,6 +151,8 @@ def run():
             print("Bye!")
             break
     file = open("data.txt", "w")
+    file.write(username)
+    file.write("New user: False")
     file.write(str(files))
     file.close()
 run()
