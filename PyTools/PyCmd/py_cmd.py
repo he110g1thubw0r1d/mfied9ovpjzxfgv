@@ -88,7 +88,7 @@ def remove_disk(disk):
 
 def run():
     global files, disk_list
-    file = open("/home/runner/PyTools/PyCmd/data.txt", "r")
+    file = open("data.txt", "r")
     files = eval(file.readline())
     file.close()
     print("PyCmd\n----------")
@@ -138,6 +138,6 @@ def run():
         elif action_index == 4:
             print("Bye!")
             break
-    file = open("/home/runner/PyTools/PyCmd/data.txt", "w")
+    file = open("data.txt", "w")
     file.write(str(files))
     file.close()
