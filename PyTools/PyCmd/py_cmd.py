@@ -1,4 +1,5 @@
 # PyCmd v1.0-alpha.1(a210312)
+from time import sleep
 uppercase = [
             'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
             'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
@@ -7,7 +8,7 @@ files = {}
 working_dir = None
 directory_count = None
 disk_list = []
-
+location = None
 
 def ls(command):
     directory_count = working_dir["DIR_COUNT"]
@@ -91,18 +92,19 @@ def remove_disk(disk):
 def run():
     global files, disk_list
     file = open("data.txt", "r")
-    files = eval(file.readline())
-    username = file.readline()
+    username = file.readline()[:-1]
     if username == "(null)":
-        print("Error: No user")
+        print("Error: No user\nOpen data.txt and replace (null) with your username.")
+        sleep(15)
         return
-    if file.readline()[-4:] == "True":
+    if file.readline()[-5:-1] == "True":
         new_user = True
     else:
         new_user = False
+    files = eval(file.readline())
     file.close()
     print("PyCmd\n----------")
-    if new_user == "True":
+    if new_user == True:
         print(f"Welcome {username}!")
     else:
         print(f"Welcome back {username}!")
@@ -151,8 +153,9 @@ def run():
             print("Bye!")
             break
     file = open("data.txt", "w")
-    file.write(username)
-    file.write("New user: False")
+    file.write(username + "\n")
+    file.write("New user: False" + "\n")
     file.write(str(files))
     file.close()
+    sleep(3)
 run()
