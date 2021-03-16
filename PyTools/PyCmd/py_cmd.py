@@ -1,4 +1,4 @@
-# PyCmd v1.0-alpha.1(a210312)
+# PyCmd v1.0-alpha.2(a210316)
 from time import sleep
 uppercase = [
             'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
@@ -9,6 +9,7 @@ working_dir = None
 directory_count = None
 disk_list = []
 location = None
+
 
 def ls(command):
     directory_count = working_dir["DIR_COUNT"]
@@ -27,6 +28,16 @@ def touch(command):
     working_dir[argument] = ""
 
 
+def rm(command):
+    global working_dir
+    argument = command[3:]
+    if argument not in working_dir.keys():
+        print("Invalid file")
+        return
+    if dict(working_dir[argument]):
+        print("Use 'rmdir' command to remove a directory.")
+        return
+    del working_dir[argument]
 def cd(command):
     global location
     argument = command[3:]
@@ -39,6 +50,110 @@ def cd(command):
     if location[1:] != ":\\":
         location += "\\"
     location += argument
+
+
+def rmdir(command):
+    global files, location, working_dir
+    argument = command[6:]
+    if (argument not in working_dir.keys()):
+        print("Invalid directory")
+        return
+    if not dict(working_dir[argument]):
+        print("Use 'rm' command to remove a file.")
+        return
+    del working_dir[argument]
+    files[location]["DIR_COUNT"] -= 1
+
+
+def add_disk():
+    global files, disk_list
+    argument = input("Enter disk name(Only one uppercase letter allowed): ")
+    if (argument in uppercase) and (len(argument) == 1):
+        if argument in disk_list:
+            print(f"The disk '{argument}' is already in the list.")
+        else:
+            disk_list.append(argument)
+            files[argument + ":\\"] = {"DIR_COUNT": 0}
+    else:
+        print("Invalid disk name")
+# PyCmd v1.0-alpha.2(a210316)
+from time import sleep
+upper_case = [
+            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+            'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
+        ]
+files = {}
+working_dir = None
+directory_count = None
+disk_list = []
+location = None
+
+
+def ls(command):
+    directory_count = working_dir["DIR_COUNT"]
+    print(
+        f"{(len(working_dir)-1)-directory_count} Files, {directory_count} Directories"
+    )
+    if (len(working_dir) - 1) != 0:
+        print(" ".join(working_dir.keys())[10:])
+
+
+def touch(command):
+    global files, location
+    argument = command[6:]
+    if "." not in argument:
+        argument += ".txt"
+    working_dir[argument] = ""
+
+
+def rm(command):
+    global working_dir
+    argument = command[3:]
+    if argument not in working_dir.keys():
+        print("Invalid file")
+        return
+    if dict(working_dir[argument]):
+        print("Use 'rmdir' command to remove a directory.")
+        return
+    del working_dir[argument]
+def cd(command):
+    global location
+    argument = command[3:]
+    if (argument == "..") and (location[1:] != ":\\"):
+        location = "\\".join(location.split("\\")[:-1])
+        return
+    if argument not in (working_dir.keys()):
+        print("Invalid directory")
+        return
+    if location[1:] != ":\\":
+        location += "\\"
+    location += argument
+
+
+def rmdir(command):
+    global files, location, working_dir
+    argument = command[6:]
+    if (argument not in working_dir.keys()):
+        print("Invalid directory")
+        return
+    if not dict(working_dir[argument]):
+        print("Use 'rm' command to remove a file.")
+        return
+    del working_dir[argument]
+    files[location]["DIR_COUNT"] -= 1
+
+
+def add_disk():
+    global files, disk_list
+    argument = input("Enter disk name(Only one upper_case letter allowed): ")
+    if (argument in upper_case) and (len(argument) == 1):
+        if argument in disk_list:
+            print(f"The disk '{argument}' is already in the list.")
+        else:
+            disk_list.append(argument)
+            files[argument + ":\\"] = {"DIR_COUNT": 0}
+    else:
+        print("Invalid disk name")
 
 
 def open_disk(disk_name):
@@ -56,11 +171,7 @@ def open_disk(disk_name):
         elif "touch " in command:
             touch(command)
         elif "rm " in command:
-            argument = command[3:]
-            try:
-                del files[location][argument]
-            except Exception:
-                print("Invalid file.")
+            rm(command)
         elif "mkdir " in command:
             argument = command[6:]
             files[location][argument] = {"DIR_COUNT": 0}
@@ -71,6 +182,8 @@ def open_disk(disk_name):
             if location[1:] != ":\\":
                 for element in location.split("\\")[1:]:
                     working_dir = working_dir[element]
+        elif "rmdir " in command:
+            rmdir(command)
         elif command == "exit":
             break
         else:
@@ -79,7 +192,7 @@ def open_disk(disk_name):
 
 def remove_disk(disk):
     global files, disk_list
-    if (disk in uppercase) and (len(disk) == 1):
+    if (disk in upper_case) and (len(disk) == 1):
         if disk not in disk_list:
             print(f"The disk '{disk}' is not in the list.")
         else:
@@ -126,19 +239,10 @@ def run():
             print("Invalid action")
             action_index = None
         if action_index == 0:
-            argument = input(
-                "Enter disk name(Only one uppercase letter allowed): ")
-            if (argument in uppercase) and (len(argument) == 1):
-                if argument in disk_list:
-                    print(f"The disk '{argument}' is already in the list.")
-                else:
-                    disk_list.append(argument)
-                    files[argument + ":\\"] = {"DIR_COUNT": 0}
-            else:
-                print("Invalid disk name")
+            add_disk()
         elif action_index == 1:
             argument = input("Enter disk name: ")
-            if (argument in uppercase) and (len(argument) == 1):
+            if (argument in upper_case) and (len(argument) == 1):
                 if argument in disk_list:
                     open_disk(argument)
                 else:
@@ -158,4 +262,6 @@ def run():
     file.write(str(files))
     file.close()
     sleep(3)
+
+
 run()
